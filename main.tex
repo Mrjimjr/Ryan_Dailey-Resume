@@ -1,0 +1,561 @@
+
+\documentclass[10pt]{article}
+
+
+% package imports
+% ---------------
+
+\usepackage[english]{babel} % for correct language and hyphenation and stuff
+\usepackage{calc}           % for easier length calculations (infix notation)
+\usepackage{enumitem}       % for configuring list environments
+\usepackage{fancyhdr}       % for setting header and footer
+\usepackage{fontspec}       % for fonts
+\usepackage{geometry}       % for setting margins (\newgeometry)
+\usepackage{graphicx}       % for pictures
+\usepackage{microtype}      % for microtypography stuff
+\usepackage{xcolor}         % for colours
+\usepackage{hyperref}
+\usepackage{multirow}
+
+% margin and column widths
+% ------------------------
+
+% margins
+\newgeometry{left=10mm,right=10mm,top=15mm,bottom=10mm}
+
+% width of the gap between left and right column
+\newlength{\cvcolumngapwidth}
+\setlength{\cvcolumngapwidth}{3.5mm}
+
+% left column width
+\newlength{\cvleftcolumnwidth}
+\setlength{\cvleftcolumnwidth}{44.5mm}
+
+% right column width
+\newlength{\cvrightcolumnwidth}
+\setlength{\cvrightcolumnwidth}{\textwidth-\cvleftcolumnwidth-\cvcolumngapwidth}
+
+% set paragraph indentation to 0, because it screws up the whole layout otherwise
+\setlength{\parindent}{0mm}
+
+
+% style definitions
+% -----------------
+% style categories explanation:
+% * \cvnameXXX is used for the name;
+% * \cvsectionXXX is used for section names (left column, accompanied by a horizontal rule);
+% * \cvtitleXXX is used for job/education titles (right column);
+% * \cvdurationXXX is used for job/education durations (left column);
+% * \cvheadingXXX is used for headings (left column);
+% * \cvmainXXX (and \setmainfont) is used for main text;
+% * \cvruleXXX is used for the horizontal rules denoting sections.
+
+% font families
+\defaultfontfeatures{Ligatures=TeX} % reportedly a good idea, see https://tex.stackexchange.com/a/37251
+
+\newfontfamily{\cvnamefont}{Roboto Medium}
+\newfontfamily{\cvsectionfont}{Roboto Medium}
+\newfontfamily{\cvtitlefont}{Roboto Regular}
+\newfontfamily{\cvdurationfont}{Roboto Light Italic}
+\newfontfamily{\cvheadingfont}{Roboto Regular}
+\setmainfont{Roboto Light}
+
+% colours
+\definecolor{cvnamecolor}{HTML}{000000}
+\definecolor{cvsectioncolor}{HTML}{000000}
+\definecolor{cvtitlecolor}{HTML}{000000}
+\definecolor{cvdurationcolor}{HTML}{000000}
+\definecolor{cvheadingcolor}{HTML}{000000}
+\definecolor{cvmaincolor}{HTML}{000000}
+\definecolor{cvrulecolor}{HTML}{000000}
+
+\color{cvmaincolor}
+
+% styles
+\newcommand{\cvnamestyle}[1]{{\Huge\cvnamefont\textcolor{cvnamecolor}{#1}}}
+\newcommand{\cvsectionstyle}[1]{{\normalsize\cvsectionfont\textcolor{cvsectioncolor}{#1}}}
+\newcommand{\cvtitlestyle}[1]{{\large\cvtitlefont\textcolor{cvtitlecolor}{#1}}}
+\newcommand{\cvdurationstyle}[1]{{\small\cvdurationfont\textcolor{cvdurationcolor}{#1}}}
+\newcommand{\cvheadingstyle}[1]{{\normalsize\cvheadingfont\textcolor{cvheadingcolor}{#1}}}
+
+
+% inter-item spacing
+% ------------------
+
+% vertical space after personal info and standard CV items
+\newlength{\cvafteritemskipamount}
+\setlength{\cvafteritemskipamount}{2mm plus 1.25mm minus 1.25mm}
+
+% vertical space after sections
+\newlength{\cvaftersectionskipamount}
+\setlength{\cvaftersectionskipamount}{2mm plus 0.5mm minus 0.5mm}
+
+% extra vertical space to be used when a section starts with an item with a heading (e.g. in the skills section),
+% so that the heading does not follow the section name too closely
+\newlength{\cvbetweensectionandheadingextraskipamount}
+\setlength{\cvbetweensectionandheadingextraskipamount}{1mm plus 0.25mm minus 0.25mm}
+
+
+% intra-item spacing
+% ------------------
+
+% vertical space after titles
+
+% value to be used as parskip in right column of CV items and itemsep in lists (same for both, for consistency)
+\newlength{\cvparskip}
+\setlength{\cvparskip}{0.5mm plus 0.125mm minus 0.125mm}
+
+% set global list configuration (use parskip as itemsep, and no separation otherwise)
+\setlist{parsep=0mm,topsep=0mm,partopsep=0mm,itemsep=\cvparskip}
+
+
+% CV commands
+% -----------
+
+% creates a "personal info" CV item with the given left and right column contents, with appropriate vertical space after
+% @param #1 left column content (should be the CV photo)
+% @param #2 right column content (should be the name and personal info)
+\newcommand{\cvpersonalinfo}[2]{
+    % left and right column
+    \begin{minipage}[t]{\cvleftcolumnwidth}
+        \vspace{0mm} % XXX hack to align to top, see https://tex.stackexchange.com/a/11632
+        \raggedleft #1
+    \end{minipage}% XXX necessary comment to avoid unwanted space
+    \hspace{\cvcolumngapwidth}% XXX necessary comment to avoid unwanted space
+    \begin{minipage}[t]{\cvrightcolumnwidth}
+        \vspace{0mm} % XXX hack to align to top, see https://tex.stackexchange.com/a/11632
+        #2
+    \end{minipage}
+
+    % space after
+    \vspace{\cvafteritemskipamount}
+}
+
+% typesets a name, with appropriate vertical space after
+% @param #1 name text
+\newcommand{\cvname}[1]{
+    % name
+    \cvnamestyle{#1}
+
+    % space after
+    \vspace{0mm plus 0.75mm minus 0.75mm}
+}
+
+% typesets a line of personal info beginning with an icon, with appropriate vertical space after
+% @param #1 parameters for the \includegraphics command used to include the icon
+% @param #2 icon filename
+% @param #3 line text
+\newcommand{\cvpersonalinfolinewithicon}[3]{
+    % icon, vertically aligned with text (see https://tex.stackexchange.com/a/129463)
+    \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[#1]{#2}}
+    % text
+    #3
+
+    % space after
+    \vspace{2mm plus 0.5mm minus 0.5mm}
+}
+
+% creates a "section" CV item with the given left column content, a horizontal rule in the right column, and with
+% appropriate vertical space after
+% @param #1 left column content (should be the section name)
+\newcommand{\cvsection}[1]{
+    % left and right column
+    \begin{minipage}[t]{\cvleftcolumnwidth}
+        \raggedleft\cvsectionstyle{#1}
+    \end{minipage}% XXX necessary comment to avoid unwanted space
+    \hspace{\cvcolumngapwidth}% XXX necessary comment to avoid unwanted space
+    \begin{minipage}[t]{\cvrightcolumnwidth}
+        \textcolor{cvrulecolor}{\rule{\cvrightcolumnwidth}{0.3mm}}
+    \end{minipage}
+
+    % space after
+    \vspace{\cvaftersectionskipamount}
+}
+
+% creates a standard, multi-purpose CV item with the given left and right column contents, parskip set to cvparskip
+% in the right column, and with appropriate vertical space after
+% @param #1 left column content
+% @param #2 right column content
+\newcommand{\cvitem}[2]{
+    % left and right column
+    \begin{minipage}[t]{\cvleftcolumnwidth}
+        \raggedleft #1
+    \end{minipage}% XXX necessary comment to avoid unwanted space
+    \hspace{\cvcolumngapwidth}% XXX necessary comment to avoid unwanted space
+    \begin{minipage}[t]{\cvrightcolumnwidth}
+        \setlength{\parskip}{\cvparskip} #2
+    \end{minipage}
+
+    % space after
+    \vspace{\cvafteritemskipamount}
+}
+
+% typesets a title, with appropriate vertical space after
+% @param #1 title text
+\newcommand{\cvtitle}[1]{
+    % title
+    \cvtitlestyle{#1}
+
+    % space after
+    \vspace{1mm plus 0.25mm minus 0.25mm}
+    % XXX need to subtract cvparskip here, because it is automatically inserted after the title "paragraph"
+    \vspace{-\cvparskip}
+}
+
+
+% header and footer
+% -----------------
+
+% set empty header and footer
+\fancyhf{}
+\pagestyle{fancy}
+\rhead{Ryan Dailey \thepage \hspace{1pt}}
+% set header line to zero
+\renewcommand{\headrulewidth}{0pt}
+
+% ===============================
+% Online vs non online
+
+% Tell whether or not to add links
+\def\online{1}
+% Tell if long form
+\def\cv{0}
+
+% Change Spacing If Long Form 
+\if\cv1
+% vertical space after personal info and standard CV items
+\setlength{\cvafteritemskipamount}{3mm plus 1.25mm minus 1.25mm}
+
+% vertical space after sections
+\setlength{\cvaftersectionskipamount}{3mm plus 0.5mm minus 0.5mm}
+
+% extra vertical space to be used when a section starts with an item with a heading (e.g. in the skills section),
+% so that the heading does not follow the section name too closely
+\setlength{\cvbetweensectionandheadingextraskipamount}{2mm plus 0.25mm minus 0.25mm}
+\fi
+
+\if\online1
+% Link Colors
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!red,
+  urlcolor=gray!70!black
+}
+\fi
+
+\begin{document}
+\cvname{Ryan Dailey}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{p{0.33\textwidth}p{0.33\textwidth}p{0.33\textwidth}}
+        \begin{tabular}[c]{@{}l@{}}
+            \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{phone}}
+            \href{tel:13177525143}{(317) 752-5143}
+            \vspace{2mm plus 0.5mm minus 0.5mm}
+        \end{tabular} & \begin{tabular}[c]{@{}l@{}}
+            \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{linkedin}}
+            \href{https://www.linkedin.com/in/rmdailey/}{linkedin.com/in/rmdailey}
+        \end{tabular} & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}
+            \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{location}} 420 S. Salisbury Street, Apt. 11 \\ 
+            \hspace*{4mm} West Lafayette, Indiana, 47906
+        \end{tabular}} \\
+        \begin{tabular}[c]{@{}l@{}}
+            \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{envelop}}
+            \href{mailto:ryanmdailey1@gmail.com}{ryanmdailey1@gmail.com}
+        \end{tabular} & \begin{tabular}[c]{@{}l@{}}
+            \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{github}}
+            \href{https://github.com/Mrjimjr/}{github.com/Mrjimjr/}
+        \end{tabular} & 
+    \end{tabular}
+\end{table}
+% work experience
+% ---------------
+
+\cvsection{EDUCATION}
+
+\cvitem{
+    \cvdurationstyle{May 2018 – Present}
+}{
+    \cvtitle{Master's of Engineering in Computer Engineering}
+
+    Purdue University, West Lafayette, Indiana
+
+    \begin{itemize}[leftmargin=*]
+        \item \textit{Area of Study:} Large-Scale Data Aggregation -- GPA: 3.35
+        \item \textit{MS Thesis:} Automated Data Aggregation from Netowork Cameras
+    \end{itemize}
+}
+\cvitem{
+    \cvdurationstyle{August 2014 – May 2018}
+}{
+    \cvtitle{Bachelor's of Science in Computer Engineering}
+
+    Purdue University, West Lafayette, Indiana
+
+    \begin{itemize}[leftmargin=*]
+        \item \textit{Minor:} Management -- GPA: 3.22
+    \end{itemize}
+}
+
+\cvsection{ENTREPRENURESHIP}
+
+% master's
+\cvitem{
+    \cvdurationstyle{September 2017 – October 2018}
+}{
+    \cvtitle{Founder and CEO}
+
+    GroundTruth Inc., West Lafayette, Indiana
+
+    \begin{itemize}[leftmargin=*]
+        \item Proposed improved techniques for data selection in application-specific deep learning model development.
+        \item Wrote research grants for the National Science Foundation.
+        \item Investigated and proposed methods to reduce the annotation overhead for training supervised deep learning algorithms.
+        \item Conducted market research on the emerging computer vision and deep learning markets.
+        \item Interviewed more than 30 companies about their large-scale image data collection and annotation procedures. 
+    \end{itemize}
+}
+
+\cvsection{WORK EXPERIENCE}
+
+% master's
+\cvitem{
+    \cvdurationstyle{June 2019 – August 2019}
+}{
+    \cvtitle{Data Science Intern}
+
+    Capital One, McLean, Virginia
+
+    \begin{itemize}[leftmargin=*]
+        \item Developed variable monitoring techniques for identifying and mitigating potential performance risks in production stage machine learning models.
+        \item Interviewed project stakeholders to develop design specifications supported long-term company goals and ensured end-user needs would be met.
+        \item Implemented variable monitoring techniques in a Python library with extensive documentation and usage examples.
+    \end{itemize}
+}
+
+\cvitem{
+    \cvdurationstyle{Fall 2018 – Present}
+}{
+    \cvtitle{Vertically Integrated Projects (VIP) Teaching Assistant}
+
+    Purdue University, West Lafayette, Indiana
+
+    \begin{itemize}[leftmargin=*]
+        \item Created course requirements and designed assignments to help students understand and interact with real-world research problems in the fields of computer vision, machine learning, and data collection.
+        \item Directed undergraduate students in the development of research papers.
+        \item Assessed individual student contribution and gave feedback on research problem formation and experiment design.
+    \end{itemize}
+}
+
+\cvsection{RESEARCH EXPERIENCE}
+
+\cvitem{
+    \cvdurationstyle{Spring 2017}
+}{
+    \cvtitle{Lead Undergraduate Researcher for the CAM2 Project}
+
+    Purdue University, West Lafayette, Indiana
+
+    \begin{itemize}[leftmargin=*]
+        \item Mentored six sub-teams of more than 30 students that conducted experiments in data collection, computer vision, network camera security, and distributed systems
+        \if\online1
+            (see \href{https://www.cam2project.net/}{CAM2 website})
+        \fi.
+        \item Maintained software and user accounts on CAM2 research lab machines.
+        \item Developed data management practices and wrote extensive onboarding documentation.
+    \end{itemize}
+}
+
+\cvitem{
+    \cvdurationstyle{Fall 2016}
+}{
+    \cvtitle{CAM2 Leader of Camera Database Management}
+
+    Purdue University, West Lafayette, Indiana
+
+    \begin{itemize}[leftmargin=*]
+        \item Designed and implemented open source software and RESTful API for CAM2 camera database 
+        \if\online1 (see \href{https://github.com/PurdueCAM2Project/CameraDatabaseClient}{Python Client} and \href{https://github.com/PurdueCAM2Project/CAM2ImageArchiver}{Image Achiever} on \href{https://github.com/PurdueCAM2Project}{CAM2 Project GitHub})\fi
+        \item Identified methods to incorporate streaming network cameras into the CAM2 database.
+    \end{itemize}
+}
+
+\cvitem{
+    \cvdurationstyle{Summer 2016}
+}{
+    \cvtitle{Undergraduate Research Assistant CAM2 Project}
+
+    Purdue University, West Lafayette, Indiana
+
+    \begin{itemize}[leftmargin=*]
+        \item Developed novel web-scraping methods for aggregating network camera data, resulting in a database of 120,000 unique cameras in 160 countries around the world.
+        \item Created unique methodology for network camera metadata collection that enabled the group to find frame rate, resolution and location information.
+    \end{itemize}
+}
+
+\cvsection{PUBLICATIONS}
+
+% master's
+\cvitem{
+    \cvdurationstyle{}
+}{
+    % \if\cv
+    \begin{itemize}[leftmargin=*]
+        \item \textbf{Ryan Dailey}, Ahmed S. Kaseb, Chandler Brown, Sam Jenkins, Sam Yellin, Fengjian Pan, Yung-Hsiang Lu, “\if\online1 \href{https://drive.google.com/open?id=1479pCURB0qsDXMOfdWBarYYTbIyrDcYf}{Creating the World’s Largest Network Camera Database}\else Creating the World’s Largest Network Camera Database\fi,” Imaging and Multimedia Analytics in a Web and Mobile World 2017.
+        \item Kent Gauen, \textbf{Ryan Dailey}, John Laiman, Yuxiang Zi, Nirmal Asokan, Yung-Hsiang Lu, George Thiruvathukal, Mei-Ling Shyu, Shu-Ching Chen, “\if\online1 \href{https://drive.google.com/open?id=1YFEIxjftRhNtgMDuUe9-cY8GJ_6H00yZ}{Comparison of Visual Datasets for Machine Learning}\else Comparison of Visual Datasets for Machine Learning\fi” (Invited Paper), IEEE International Conference on Information Reuse 2017.
+        \item Kent Gauen, \textbf{Ryan Dailey}, Yung-Hsiang Lu, Eunbyung Park, Wei Liu, Alexander C. Berg, Yiran Chen, “\if\online1 \href{https://drive.google.com/open?id=1ZV4mC7vhHB9v9lOCJ_r946EbLbhj4Nus}{Three Years of LowPower Image Recognition Challenge: Introduction to Special Session}\else Three Years of LowPower Image Recognition Challenge: Introduction to Special Session\fi,” Design Automation and Test in Europe 2018.
+        \item Samira Pouyanfar, Yudong Tao, Anup Mohan, Haiman Tian, Ahmed S. Kaseb, Kent Gauen, \textbf{Ryan Dailey}, Sarah Aghajanzadeh, Yung-Hsiang Lu, Shu-Ching Chen, Mei-Ling Shyu, "\if\online1 \href{https://drive.google.com/open?id=1MIHxzYJoPLmKy7OXyZUhjhRnKTiDwypx}{Dynamic Sampling in Convolutional Neural Networks for Imbalanced Data Classification}\else Dynamic Sampling in Convolutional Neural Networks for Imbalanced Data Classification\fi", IEEE Conference on Multimedia Information Processing and Retrieval 2018
+    \end{itemize}
+    % \else
+    % \begin{itemize}[leftmargin=*]
+    %     \item “\if\online1 \href{https://drive.google.com/open?id=1479pCURB0qsDXMOfdWBarYYTbIyrDcYf}{Creating the World’s Largest Network Camera Database}\else Creating the World’s Largest Network Camera Database\fi,” Imaging and Multimedia Analytics in a Web and Mobile World 2017.
+    %     \item “\if\online1 \href{https://drive.google.com/open?id=1YFEIxjftRhNtgMDuUe9-cY8GJ_6H00yZ}{Comparison of Visual Datasets for Machine Learning}\else Comparison of Visual Datasets for Machine Learning\fi” (Invited Paper), IEEE International Conference on Information Reuse 2017.
+    %     \item “\if\online1 \href{https://drive.google.com/open?id=1ZV4mC7vhHB9v9lOCJ_r946EbLbhj4Nus}{Three Years of LowPower Image Recognition Challenge: Introduction to Special Session}\else Three Years of LowPower Image Recognition Challenge: Introduction to Special Session\fi,” Design Automation and Test in Europe 2018.
+    %     \item "\if\online1 \href{https://drive.google.com/open?id=1MIHxzYJoPLmKy7OXyZUhjhRnKTiDwypx}{Dynamic Sampling in Convolutional Neural Networks for Imbalanced Data Classification}\else Dynamic Sampling in Convolutional Neural Networks for Imbalanced Data Classification\fi", IEEE Conference on Multimedia Information Processing and Retrieval 2018
+    % \end{itemize}
+    % \fi
+}
+
+\cvsection{EXPERIENCE}
+
+\cvitem{
+    \cvdurationstyle{July 2017}
+}{
+    \cvtitle{Low Power Image Recognition Challenge (LPIRC) – Competition Organizer}
+    
+    Conference on Computer Vision and Pattern Recognition (CVPR), Honolulu, Hawaii
+
+    \begin{itemize}[leftmargin=*]
+        \item Developed automated submission and scoring system for the competition. \if\online1(\href{https://rebootingcomputing.ieee.org/lpirc}{LPIRC website})\fi
+        \item Evaluated the participants' object detection submissions and calculated final scores.
+    \end{itemize}
+}
+
+\cvitem{
+    \cvdurationstyle{January 2017}
+}{
+    \cvtitle{"Creating the World’s Largest Network Camera Database" – Presenting Author}
+
+    IS\&T Electronic Imaging 2017, San Francisco, California
+
+    \begin{itemize}[leftmargin=*]
+        \item Presented work on large-scale camera data and metadata aggregation methods published in Imaging and Multimedia Analytics in a Web and Mobile World 2017.
+    \end{itemize}
+}
+
+\cvitem{
+    \cvdurationstyle{November 2017}
+}{
+    \cvtitle{"Low-Power Image Recognition Challenge (LPIRC)" – Poster}
+    
+    IEEE International Conference on Rebooting Computing 2017, Tysons, Virginia
+
+    \begin{itemize}[leftmargin=*]
+        \item Presented poster summarizing the previous three years of the Low Power Image Recognition Challenge.
+    \end{itemize}
+}
+
+\cvitem{
+    \cvdurationstyle{March 2019}
+}{
+    \cvtitle{"Automated Indexing of Visual Data from Network Cameras" – Poster}
+    
+    Purdue CERIAS Symposium, West Lafayette, Indiana
+
+    \begin{itemize}[leftmargin=*]
+        \item Presented general approach for collecting live network camera data from the internet.
+    \end{itemize}
+}
+
+\cvitem{
+    \cvdurationstyle{April 2017}
+}{
+    \cvtitle{"Analyze Visual Data from Worldwide Network Cameras" – Poster}
+    
+    Purdue CERIAS Symposium, West Lafayette, Indiana
+
+    \begin{itemize}[leftmargin=*]
+        \item Presented about data security, risks, and safety benefits of public network cameras.
+    \end{itemize}
+}
+
+\if\cv1
+\cvitem{
+    \cvdurationstyle{July 2019}
+}{
+    \cvtitle{Attendee}
+    
+    Scipy, Austin, Texas
+
+    \begin{itemize}[leftmargin=*]
+        \item Attended sprints for Dask development.
+    \end{itemize}
+}
+\fi
+
+\cvitem{
+    \cvdurationstyle{October 2018}
+}{
+    \cvtitle{"An overview of Git and GitHub" – Guest Lecture}
+    
+    Purdue University, West Lafayette, Indiana
+
+    \begin{itemize}[leftmargin=*]
+        \item Presented an introduction to Git and GitHub version control systems for Vertically Integrated Projects (VIP) at Purdue.
+    \end{itemize}
+}
+
+\cvitem{
+    \cvdurationstyle{June 2017}
+}{
+    \cvtitle{"Global Network Cameras and Public Safety" – Guest Lecture}
+    
+    Purdue University, West Lafayette, Indiana
+
+    \begin{itemize}[leftmargin=*]
+        \item Presented a lecture for the 2017 Morgan St. Summer Visual Analytics Workshop on the impact of network cameras on public safety and the integration of the CAM2 network camera database with the VALET system.
+    \end{itemize}
+}
+
+\if\cv1
+    \cvsection{FRATERNITY LEADERSHIP}
+    
+    \cvitem{
+        \cvdurationstyle{Spring and Fall 2016}
+    }{
+        \cvtitle{Kappa Delta Rho, Theta Chapter, Purdue University}
+        
+        Risk Management Officer
+    
+        \begin{itemize}[leftmargin=*]
+            \item Elected member of the executive board by chapter.
+            \item Created and maintained a safe, sustainable environment for the members of the chapter.
+            \item Communicated with other members of the executive board in planning events and enforcing the house code of conduct. 
+        \end{itemize}
+        
+        Centurion
+    
+        \begin{itemize}[leftmargin=*]
+            \item Elected by the chapter to the 3-member judiciary board.
+            \item Reviewed decisions made by the executive board to ensured fair and unbiased punishment, among other responsibilities.
+        \end{itemize}
+    }
+\fi
+
+% skills
+% ------
+\cvsection{SKILLS}
+
+\vspace{\cvbetweensectionandheadingextraskipamount}
+\cvitem{
+    \cvheadingstyle{Programming Languages:}
+}{
+    Python, JavaScript, Node.js, Bash, C, C++, SQL, NoSQL, System Verilog, Bash, Octave, MATLAB, HTML, CSS
+}
+\cvitem{
+    \cvheadingstyle{Libraries and Frameworks:}
+}{
+    MongoDB, Git, GitHub, Numpy, Pandas, Dask, Scikit Learn, Spark, Hadoop, Scipy, Django, Flask, Docker, OpenCV, Excel, System Verilog, AWS, Pytorch, TensorFlow, Continuous Integration, REST APIs, Linux, Jupyter, Anaconda, Sphinx, STM32, EagleCAD, OrCAD, Tableau
+}
+
+\end{document}

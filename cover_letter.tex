@@ -1,0 +1,284 @@
+
+\documentclass[10pt]{article}
+
+
+% package imports
+% ---------------
+
+\usepackage[english]{babel} % for correct language and hyphenation and stuff
+\usepackage{calc}           % for easier length calculations (infix notation)
+\usepackage{enumitem}       % for configuring list environments
+\usepackage{fancyhdr}       % for setting header and footer
+\usepackage{fontspec}       % for fonts
+\usepackage{geometry}       % for setting margins (\newgeometry)
+\usepackage{graphicx}       % for pictures
+\usepackage{microtype}      % for microtypography stuff
+\usepackage{xcolor}         % for colours
+\usepackage{hyperref}
+\usepackage{multirow}
+
+% margin and column widths
+% ------------------------
+
+% margins
+\newgeometry{left=15mm,right=15mm,top=15mm,bottom=15mm}
+
+% width of the gap between left and right column
+\newlength{\cvcolumngapwidth}
+\setlength{\cvcolumngapwidth}{0mm}
+
+% left column width
+\newlength{\cvleftcolumnwidth}
+\setlength{\cvleftcolumnwidth}{60mm}
+
+% right column width
+\newlength{\cvrightcolumnwidth}
+\setlength{\cvrightcolumnwidth}{\textwidth-\cvleftcolumnwidth-\cvcolumngapwidth}
+
+% set paragraph indentation to 0, because it screws up the whole layout otherwise
+\setlength{\parindent}{5mm}
+
+
+% style definitions
+% -----------------
+% style categories explanation:
+% * \cvnameXXX is used for the name;
+% * \cvsectionXXX is used for section names (left column, accompanied by a horizontal rule);
+% * \cvtitleXXX is used for job/education titles (right column);
+% * \cvdurationXXX is used for job/education durations (left column);
+% * \cvheadingXXX is used for headings (left column);
+% * \cvmainXXX (and \setmainfont) is used for main text;
+% * \cvruleXXX is used for the horizontal rules denoting sections.
+
+% font families
+\defaultfontfeatures{Ligatures=TeX} % reportedly a good idea, see https://tex.stackexchange.com/a/37251
+
+\newfontfamily{\cvnamefont}{Roboto Medium}
+\newfontfamily{\cvsectionfont}{Roboto Medium}
+\newfontfamily{\cvtitlefont}{Roboto Regular}
+\newfontfamily{\cvdurationfont}{Roboto Light Italic}
+\newfontfamily{\cvheadingfont}{Roboto Regular}
+\setmainfont{Roboto Light}
+
+% colours
+\definecolor{cvnamecolor}{HTML}{000000}
+\definecolor{cvsectioncolor}{HTML}{000000}
+\definecolor{cvtitlecolor}{HTML}{000000}
+\definecolor{cvdurationcolor}{HTML}{000000}
+\definecolor{cvheadingcolor}{HTML}{000000}
+\definecolor{cvmaincolor}{HTML}{000000}
+\definecolor{cvrulecolor}{HTML}{000000}
+
+\color{cvmaincolor}
+
+% styles
+\newcommand{\cvnamestyle}[1]{{\Huge\cvnamefont\textcolor{cvnamecolor}{#1}}}
+\newcommand{\cvsectionstyle}[1]{{\normalsize\cvsectionfont\textcolor{cvsectioncolor}{#1}}}
+\newcommand{\cvtitlestyle}[1]{{\large\cvtitlefont\textcolor{cvtitlecolor}{#1}}}
+\newcommand{\cvdurationstyle}[1]{{\small\cvdurationfont\textcolor{cvdurationcolor}{#1}}}
+\newcommand{\cvheadingstyle}[1]{{\normalsize\cvheadingfont\textcolor{cvheadingcolor}{#1}}}
+
+
+% inter-item spacing
+% ------------------
+
+% vertical space after personal info and standard CV items
+\newlength{\cvafteritemskipamount}
+\setlength{\cvafteritemskipamount}{2mm plus 1.25mm minus 1.25mm}
+
+% vertical space after sections
+\newlength{\cvaftersectionskipamount}
+\setlength{\cvaftersectionskipamount}{2mm plus 0.5mm minus 0.5mm}
+
+% extra vertical space to be used when a section starts with an item with a heading (e.g. in the skills section),
+% so that the heading does not follow the section name too closely
+\newlength{\cvbetweensectionandheadingextraskipamount}
+\setlength{\cvbetweensectionandheadingextraskipamount}{1mm plus 0.25mm minus 0.25mm}
+
+
+% intra-item spacing
+% ------------------
+
+% vertical space after titles
+
+% value to be used as parskip in right column of CV items and itemsep in lists (same for both, for consistency)
+\newlength{\cvparskip}
+\setlength{\cvparskip}{0.5mm plus 0.125mm minus 0.125mm}
+
+% set global list configuration (use parskip as itemsep, and no separation otherwise)
+\setlist{parsep=0mm,topsep=0mm,partopsep=0mm,itemsep=\cvparskip}
+
+
+% CV commands
+% -----------
+
+% creates a "personal info" CV item with the given left and right column contents, with appropriate vertical space after
+% @param #1 left column content (should be the CV photo)
+% @param #2 right column content (should be the name and personal info)
+\newcommand{\cvpersonalinfo}[2]{
+    % left and right column
+    \begin{minipage}[t]{\cvleftcolumnwidth}
+        \vspace{0mm} % XXX hack to align to top, see https://tex.stackexchange.com/a/11632
+        \raggedleft #1
+    \end{minipage}% XXX necessary comment to avoid unwanted space
+    \hspace{\cvcolumngapwidth}% XXX necessary comment to avoid unwanted space
+    \begin{minipage}[t]{\cvrightcolumnwidth}
+        \vspace{0mm} % XXX hack to align to top, see https://tex.stackexchange.com/a/11632
+        #2
+    \end{minipage}
+
+    % space after
+    \vspace{\cvafteritemskipamount}
+}
+
+% typesets a name, with appropriate vertical space after
+% @param #1 name text
+\newcommand{\cvname}[1]{
+    % name
+    \cvnamestyle{#1}
+
+    % space after
+    \vspace{0mm plus 0.75mm minus 0.75mm}
+}
+
+% typesets a line of personal info beginning with an icon, with appropriate vertical space after
+% @param #1 parameters for the \includegraphics command used to include the icon
+% @param #2 icon filename
+% @param #3 line text
+\newcommand{\cvpersonalinfolinewithicon}[3]{
+    % icon, vertically aligned with text (see https://tex.stackexchange.com/a/129463)
+    \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[#1]{#2}}
+    % text
+    #3
+
+    % space after
+    \vspace{2mm plus 0.5mm minus 0.5mm}
+}
+
+% creates a "section" CV item with the given left column content, a horizontal rule in the right column, and with
+% appropriate vertical space after
+% @param #1 left column content (should be the section name)
+\newcommand{\cvsection}[1]{
+    % left and right column
+    \begin{minipage}[t]{\cvleftcolumnwidth}
+        \raggedleft\cvsectionstyle{#1}
+    \end{minipage}% XXX necessary comment to avoid unwanted space
+    \hspace{\cvcolumngapwidth}% XXX necessary comment to avoid unwanted space
+    \begin{minipage}[t]{\cvrightcolumnwidth}
+        \textcolor{cvrulecolor}{\rule{\cvrightcolumnwidth}{0.3mm}}
+    \end{minipage}
+
+    % space after
+    \vspace{\cvaftersectionskipamount}
+}
+
+
+% typesets a title, with appropriate vertical space after
+% @param #1 title text
+\newcommand{\cvtitle}[1]{
+    % title
+    \cvtitlestyle{#1}
+
+    % space after
+    \vspace{1mm plus 0.25mm minus 0.25mm}
+    % XXX need to subtract cvparskip here, because it is automatically inserted after the title "paragraph"
+    \vspace{-\cvparskip}
+}
+
+
+% header and footer
+% -----------------
+
+% set empty header and footer
+\fancyhf{}
+\pagestyle{fancy}
+% \rhead{Ryan Dailey \thepage \hspace{1pt}}
+% set header line to zero
+\renewcommand{\headrulewidth}{0pt}
+
+% =========================================
+% Variables for job
+\newcommand{\company}{Microsoft}
+\newcommand{\job}{SOMEJOB}
+
+% Link Colors
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!red,
+  urlcolor=gray!70!black
+}
+
+
+% preamble end/document start
+% ===========================
+
+\begin{document}
+\cvname{Ryan Dailey}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{p{0.33\textwidth}p{0.33\textwidth}p{0.33\textwidth}}
+        \begin{tabular}[c]{@{}l@{}}
+            \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{phone}}
+            \href{tel:13177525143}{(317) 752-5143}
+            \vspace{2mm plus 0.5mm minus 0.5mm}
+        \end{tabular} & \begin{tabular}[c]{@{}l@{}}
+            \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{linkedin}}
+            \href{https://www.linkedin.com/in/rmdailey/}{linkedin.com/in/rmdailey}
+        \end{tabular} & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}
+            \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{location}} 420 S. Salisbury Street, Apt. 11 \\ 
+            \hspace*{4mm} West Lafayette, Indiana, 47906
+        \end{tabular}} \\
+        \begin{tabular}[c]{@{}l@{}}
+            \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{envelop}}
+            \href{mailto:ryanmdailey1@gmail.com}{ryanmdailey1@gmail.com}
+        \end{tabular} & \begin{tabular}[c]{@{}l@{}}
+            \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{github}}
+            \href{https://github.com/Mrjimjr/}{github.com/Mrjimjr/}
+        \end{tabular} & 
+    \end{tabular}
+\end{table}
+% work experience
+% ---------------
+
+% \cvitem{
+%     % \cvdurationstyle{}
+% }{
+
+\vspace{4\cvaftersectionskipamount}
+
+\noindent I would love to put my engineering knowledge and strengths to work for \company. 
+
+\vspace{2\cvaftersectionskipamount}
+
+As a second-year master's student in Computer/Electrical Engineering at Purdue University, my research is focused on automated aggregation and analysis of live video data from the internet. As an undergraduate, I published research papers in network camera data aggregation, dataset bias detection for machine learning modules, and a review of the IEEE Low Power Image Recognition Competition (\href{https://rebootingcomputing.ieee.org/lpirc}{LPIRC Website}), which I directed in 2017.  
+
+% My research experience as both an undergraduate and graduate student makes me uniquely suited for the \job role. 
+As an undergraduate student, I was heavily involved in research with the Continuous Analysis of Many Cameras Project (\href{https://www.cam2project.net/}{CAM2 website}). The goal of the CAM2 project is to aggregate and analyze publicly available network cameras for a variety of purposes. During my time with the project, I was steadily promoted within the group. During my first semester with the group, I developed several novel methods for network camera data retrieval using web scraping techniques. I also created and implemented a methodology for assessing the frame rate of the cameras in the CAM2 database. These methods would become the subject of my first paper, “\href{https://drive.google.com/open?id=1479pCURB0qsDXMOfdWBarYYTbIyrDcYf}{Creating the World's Largest Real Time Network Camera Database}.”  
+
+In the fall of my junior year, I was promoted within the group to the leader of the database team. I led a team of six other undergraduate students and designed and implemented a REST API for the 130,000 network cameras in the CAM2 Database. I also directed the creation of a Python API client (\href{https://github.com/PurdueCAM2Project/CameraDatabaseClient}{available here}) and a image and video achiever (\href{https://github.com/PurdueCAM2Project/CAM2ImageArchiver}{available here}). After one semester as camera database leader, I was promoted to the undergraduate leader of the entire CAM2 project. As the leader of the CAM2 project, I mentored more than thirty undergrad students in their research. I worked as a system administrator for our research group and directed experiments in the areas of distributed systems, database design, user interface, image processing, and large-scale data collection. My experience with the CAM2 project allowed me to build my communication and leadership skills, as well as my technical expertise in the areas of data analytics, computer vision, parallel processing and distributed systems, web design, web scraping, open source development, and many more. 
+
+During senior year, I started a research company called Groundtruth Inc. and wrote a National Science Foundation Small Business Innovation Research Grant (SBIR). The grant proposed using active learning to pre-process large computer vision datasets for machine learning and identify the most relevant subset of data to manually label. The grant writing process allowed me to explore new areas beyond engineering coursework and develop networking and business skills. I conducted interviews and market research personally contacting over thirty companies in the machine learning and computer vision market.  
+
+As I entered graduate school as a master's student, I continued to develop my expertise in computer vision and large-scale video data collection. I created a web crawler to automatically search the internet for network camera data. During the design and development of the web crawler, I gained new experience in parallelization, deep learning, and distributed computing. I also begun working as a graduate teaching assistant for Virtually Integrated Projects at Purdue where I act as a research mentor for more than 80 students. I have designed assignments to help students understand and interact with real world research problems. 
+
+In the summer of 2019, I was given the opportunity to intern as a Data Scientist at Capital One in McLean, Virginia. I was able to use my experience developing open source software for research to create high quality and well documented internal libraries for machine learning variable level monitoring. I developed a new variable level monitoring library from scratch and developed new techniques to monitor production level models that are still being used.  
+
+\vspace{\cvaftersectionskipamount}
+
+\noindent I know I would be an asset to \company. 
+% Given my experience with machine learning, open source development, product design, and leadership I know the \job role is perfect for my skill-set. 
+May we meet in person to discuss the position?  
+
+\vspace{2\cvaftersectionskipamount}
+
+\noindent Thank you, 
+
+\vspace{\cvaftersectionskipamount}
+
+\includegraphics[height=30pt]{Signature.pdf}
+
+Ryan Dailey 
+% }
+
+
+\end{document}
