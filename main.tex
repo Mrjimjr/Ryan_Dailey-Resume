@@ -16,6 +16,7 @@
 \usepackage{xcolor}         % for colours
 \usepackage{hyperref}
 \usepackage{multirow}
+\usepackage{datatool}
 
 % margin and column widths
 % ------------------------
@@ -202,6 +203,27 @@
     \vspace{-\cvparskip}
 }
 
+% % SKILL SORTER
+% % ------------
+% \newcommand{\sortitem}[1]{%
+%   \DTLnewrow{list}% Create a new entry
+% %   \ifx#1\relax
+% %     \DTLnewdbentry{list}{sortlabel}{#2}% Add entry sortlabel (no optional argument)
+% %   \else
+%     \DTLnewdbentry{list}{sortlabel}{#1}% Add entry sortlabel (optional argument)
+% %   \fi%
+%   \DTLnewdbentry{list}{description}{#1}% Add entry description
+% }
+% \newenvironment{skills}{%
+%   \DTLifdbexists{list}{\DTLcleardb{list}}{\DTLnewdb{list}}% Create new/discard old list
+% }{%
+%   \DTLsort{sortlabel}{list}% Sort list
+%     % \begin{itemize}%
+%     %     \DTLforeach*{list}{\theDesc=description}{\theDesc}% Print each
+%     % \end{itemize}
+%     \DTLforeach*{list}{\theDesc=description}{\theDesc, }% Print each
+% }
+
 
 % header and footer
 % -----------------
@@ -213,13 +235,22 @@
 % set header line to zero
 \renewcommand{\headrulewidth}{0pt}
 
-% ===============================
+% ===============================================================================================
+% ===============================================================================================
+% ===============================================================================================
+% ===================================Build Settings==============================================
+% ===============================================================================================
+% ===============================================================================================
+% ===============================================================================================
 % Online vs non online
 
 % Tell whether or not to add links
 \def\online{1}
 % Tell if long form
 \def\cv{0}
+% Tell if short form
+\def\onepage{0}
+
 
 % Change Spacing If Long Form 
 \if\cv1
@@ -232,6 +263,23 @@
 % extra vertical space to be used when a section starts with an item with a heading (e.g. in the skills section),
 % so that the heading does not follow the section name too closely
 \setlength{\cvbetweensectionandheadingextraskipamount}{2mm plus 0.25mm minus 0.25mm}
+\fi
+
+% Change Spacing If Short Form 
+\if\onepage1
+% remove header (page number)
+\rhead{}
+% Set new margins
+\newgeometry{left=10mm,right=10mm,top=10mm,bottom=10mm}
+% vertical space after personal info and standard CV items
+\setlength{\cvafteritemskipamount}{1.5mm plus 1.25mm minus 1.25mm}
+
+% vertical space after sections
+\setlength{\cvaftersectionskipamount}{0.5mm plus 0.5mm minus 0.5mm}
+
+% extra vertical space to be used when a section starts with an item with a heading (e.g. in the skills section),
+% so that the heading does not follow the section name too closely
+\setlength{\cvbetweensectionandheadingextraskipamount}{1mm plus 0.25mm minus 0.25mm}
 \fi
 
 \if\online1
@@ -256,8 +304,8 @@
             \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{linkedin}}
             \href{https://www.linkedin.com/in/rmdailey/}{linkedin.com/in/rmdailey}
         \end{tabular} & \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}}
-            \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{location}} 420 S. Salisbury Street, Apt. 11 \\ 
-            \hspace*{4mm} West Lafayette, Indiana, 47906
+            \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{location}} 1585 Anderson Rd., Apt. 430\\ 
+            \hspace*{4mm} McLean, Virginia, 22102
         \end{tabular}} \\
         \begin{tabular}[c]{@{}l@{}}
             \raisebox{.5\fontcharht\font`E-.5\height}{\includegraphics[width=4mm]{envelop}}
@@ -274,7 +322,7 @@
 \cvsection{EDUCATION}
 
 \cvitem{
-    \cvdurationstyle{May 2018 – Present}
+    \cvdurationstyle{May 2018 -- Dec. 2019}
 }{
     \cvtitle{Master's of Engineering in Computer Engineering}
 
@@ -282,11 +330,11 @@
 
     \begin{itemize}[leftmargin=*]
         \item \textit{Area of Study:} Large-Scale Data Aggregation -- GPA: 3.35
-        \item \textit{MS Thesis:} Automated Data Aggregation from Netowork Cameras
+        \item \textit{MS Thesis:} Automated Data Aggregation from Network Cameras
     \end{itemize}
 }
 \cvitem{
-    \cvdurationstyle{August 2014 – May 2018}
+    \cvdurationstyle{Aug. 2014 -- May 2018}
 }{
     \cvtitle{Bachelor's of Science in Computer Engineering}
 
@@ -297,60 +345,94 @@
     \end{itemize}
 }
 
-\cvsection{ENTREPRENURESHIP}
+\cvsection{ENTREPRENEURSHIP}
 
 % master's
 \cvitem{
-    \cvdurationstyle{September 2017 – October 2018}
+    \cvdurationstyle{Sep. 2017 -- Oct. 2018}
 }{
     \cvtitle{Founder and CEO}
 
     GroundTruth Inc., West Lafayette, Indiana
 
     \begin{itemize}[leftmargin=*]
-        \item Proposed improved techniques for data selection in application-specific deep learning model development.
-        \item Wrote research grants for the National Science Foundation.
-        \item Investigated and proposed methods to reduce the annotation overhead for training supervised deep learning algorithms.
-        \item Conducted market research on the emerging computer vision and deep learning markets.
-        \item Interviewed more than 30 companies about their large-scale image data collection and annotation procedures. 
+        \item Researched techniques for smartly sampling from large datasets in order to reduce annotation overhead supervised deep learning algorithms.
+        \item Wrote research grants for the National Science Foundation proposing improved techniques for data selection in application-specific deep learning model development.
+        \item Conducted market research on emerging computer vision and deep learning markets.
+        \item Interviewed more than 30 companies about large-scale image data collection and annotation procedures. 
     \end{itemize}
 }
 
 \cvsection{WORK EXPERIENCE}
 
-% master's
 \cvitem{
-    \cvdurationstyle{June 2019 – August 2019}
+    \cvdurationstyle{Aug. 2021 -- Present}
+}{
+    \cvtitle{Principal Data Scientist}
+
+    Capital One, McLean, Virginia -- Promoted from Senior Associate Data Scientist 
+
+    \begin{itemize}[leftmargin=*]
+        \item Conducted empathy interviews with stakeholders to identify shortcomings of current monitoring processes and developed new architecture standards for monitoring pipelines.
+        \item Wrote design specifications for new monitoring pipeline architecture detailing core decisions and trade-offs; shared new design with stakeholders and acquired project buy-in. 
+        \item Led a team of engineers to build out new monitoring architecture using open source tools (Prefect, Dask, Docker, Kubernetes) leading to more scalable, maintainable, and actionable pipelines.
+    \end{itemize}
+}
+
+\cvitem{
+    \cvdurationstyle{Mar. 2020 -- Aug. 2021}
+}{
+    \cvtitle{Senior Data Scientist}
+
+    Capital One, McLean, Virginia
+
+    \begin{itemize}[leftmargin=*]
+        \item Investigated and implemented novel algorithms for model performance evaluation leading to reduction of risk in several key business areas.
+        \item Converted proof-of-concept algorithms into an scikit-learn style Python package (testing, CICD, and documentation) that was adopted across the enterprise. 
+        \item Designed and deployed (Prefect, Dask Spark) pipelines for monitoring machine learning models on millions of financial records on AWS.
+        \item Deployed interactive web applications to AWS for model performance monitoring enabling generation of deeper insights for business users.
+        \item Created new standard visualization package built on open-source APIs allowing users to easily collect monitoring results and convert them to PowerPoint or interactive dashboards.
+        \item Served on the Intern Community Building Committee and as a Data Science Intern Mentor for two years.
+    \end{itemize}
+}
+
+\cvitem{
+    \cvdurationstyle{Jun. 2019 -- Aug. 2019}
 }{
     \cvtitle{Data Science Intern}
 
     Capital One, McLean, Virginia
 
     \begin{itemize}[leftmargin=*]
-        \item Developed variable monitoring techniques for identifying and mitigating potential performance risks in production stage machine learning models.
-        \item Interviewed project stakeholders to develop design specifications supported long-term company goals and ensured end-user needs would be met.
-        \item Implemented variable monitoring techniques in a Python library with extensive documentation and usage examples.
+        \item Researched new feature monitoring techniques for identifying and mitigating potential performance risks in production stage machine learning models.
+        \item Conducted empathy interviews to determine customer needs and worked with the customer to ensure success criteria were met.
+        \item Designed and implemented feature monitoring techniques in a Python package with extensive testing, documentation, and usage examples.
     \end{itemize}
 }
 
 \cvitem{
-    \cvdurationstyle{Fall 2018 – Present}
+    \cvdurationstyle{Aug. 2018 -- Dec. 2019}
 }{
     \cvtitle{Vertically Integrated Projects (VIP) Teaching Assistant}
 
     Purdue University, West Lafayette, Indiana
 
     \begin{itemize}[leftmargin=*]
-        \item Created course requirements and designed assignments to help students understand and interact with real-world research problems in the fields of computer vision, machine learning, and data collection.
-        \item Directed undergraduate students in the development of research papers.
+        \item Created course requirements and designed assignments to help students understand and interact with real-world research in computer vision, machine learning, and data aggregation.
+        \item Directed undergraduate students in development of research papers.
         \item Assessed individual student contribution and gave feedback on research problem formation and experiment design.
+        \item Gave lectures on Git and GitHub, Python, Entrepreneurship and other topics. 
     \end{itemize}
 }
+
+%  SHORTEN TO ONE PAGE =====================================================
+\if\cv0
+\else
 
 \cvsection{RESEARCH EXPERIENCE}
 
 \cvitem{
-    \cvdurationstyle{Spring 2017}
+    \cvdurationstyle{Dec. 2016 -- Dec. 2017}
 }{
     \cvtitle{Lead Undergraduate Researcher for the CAM2 Project}
 
@@ -367,31 +449,32 @@
 }
 
 \cvitem{
-    \cvdurationstyle{Fall 2016}
+    \cvdurationstyle{Aug. 2016 -- Dec. 2016}
 }{
     \cvtitle{CAM2 Leader of Camera Database Management}
 
     Purdue University, West Lafayette, Indiana
 
     \begin{itemize}[leftmargin=*]
-        \item Designed and implemented open source software and RESTful API for CAM2 camera database 
-        \if\online1 (see \href{https://github.com/PurdueCAM2Project/CameraDatabaseClient}{Python Client} and \href{https://github.com/PurdueCAM2Project/CAM2ImageArchiver}{Image Achiever} on \href{https://github.com/PurdueCAM2Project}{CAM2 Project GitHub})\fi
+        \item Designed and implemented open source software and RESTful API for CAM2 camera database including a\if\online1~\href{https://github.com/PurdueCAM2Project/CameraDatabaseClient}{Python Client} and \href{https://github.com/PurdueCAM2Project/CAM2ImageArchiver}{Image Achiever}\else~Python Client and Image Achiever\fi~for downloading network camera data.
         \item Identified methods to incorporate streaming network cameras into the CAM2 database.
     \end{itemize}
 }
 
 \cvitem{
-    \cvdurationstyle{Summer 2016}
+    \cvdurationstyle{May 2016 -- Aug. 2016}
 }{
     \cvtitle{Undergraduate Research Assistant CAM2 Project}
 
     Purdue University, West Lafayette, Indiana
 
     \begin{itemize}[leftmargin=*]
-        \item Developed novel web-scraping methods for aggregating network camera data, resulting in a database of 120,000 unique cameras in 160 countries around the world.
-        \item Created unique methodology for network camera metadata collection that enabled the group to find frame rate, resolution and location information.
+        \item Developed novel web-scraping methods for aggregating network camera data, resulting in a database of 120,000 unique cameras in 160 countries.
+        \item Created novel methodology to automatically collect frame rate, resolution, location information and other valuable metadata from network cameras.
     \end{itemize}
 }
+
+\fi
 
 \cvsection{PUBLICATIONS}
 
@@ -401,10 +484,18 @@
 }{
     % \if\cv
     \begin{itemize}[leftmargin=*]
+    
+        \item \textbf{Ryan Dailey}, Aniesh Chawla, Andrew Liu, Sripath Mishra, Ling Zhang, Josh Majors, Yung-Hsiang Lu, George K. Thiruvathukal, “\if\online1 \href{https://dl.acm.org/doi/10.1145/3450629}{Automated Discovery of Network Cameras in Heterogeneous Web Pages}\else Automated Discovery of Network Cameras in Heterogeneous Web Pages\fi,” ACM Transactions on Internet Technology, February 2022.
+
         \item \textbf{Ryan Dailey}, Ahmed S. Kaseb, Chandler Brown, Sam Jenkins, Sam Yellin, Fengjian Pan, Yung-Hsiang Lu, “\if\online1 \href{https://drive.google.com/open?id=1479pCURB0qsDXMOfdWBarYYTbIyrDcYf}{Creating the World’s Largest Network Camera Database}\else Creating the World’s Largest Network Camera Database\fi,” Imaging and Multimedia Analytics in a Web and Mobile World 2017.
+        
         \item Kent Gauen, \textbf{Ryan Dailey}, John Laiman, Yuxiang Zi, Nirmal Asokan, Yung-Hsiang Lu, George Thiruvathukal, Mei-Ling Shyu, Shu-Ching Chen, “\if\online1 \href{https://drive.google.com/open?id=1YFEIxjftRhNtgMDuUe9-cY8GJ_6H00yZ}{Comparison of Visual Datasets for Machine Learning}\else Comparison of Visual Datasets for Machine Learning\fi” (Invited Paper), IEEE International Conference on Information Reuse 2017.
+        
         \item Kent Gauen, \textbf{Ryan Dailey}, Yung-Hsiang Lu, Eunbyung Park, Wei Liu, Alexander C. Berg, Yiran Chen, “\if\online1 \href{https://drive.google.com/open?id=1ZV4mC7vhHB9v9lOCJ_r946EbLbhj4Nus}{Three Years of LowPower Image Recognition Challenge: Introduction to Special Session}\else Three Years of LowPower Image Recognition Challenge: Introduction to Special Session\fi,” Design Automation and Test in Europe 2018.
-        \item Samira Pouyanfar, Yudong Tao, Anup Mohan, Haiman Tian, Ahmed S. Kaseb, Kent Gauen, \textbf{Ryan Dailey}, Sarah Aghajanzadeh, Yung-Hsiang Lu, Shu-Ching Chen, Mei-Ling Shyu, "\if\online1 \href{https://drive.google.com/open?id=1MIHxzYJoPLmKy7OXyZUhjhRnKTiDwypx}{Dynamic Sampling in Convolutional Neural Networks for Imbalanced Data Classification}\else Dynamic Sampling in Convolutional Neural Networks for Imbalanced Data Classification\fi", IEEE Conference on Multimedia Information Processing and Retrieval 2018
+       
+        \item Samira Pouyanfar, Yudong Tao, Anup Mohan, Haiman Tian, Ahmed S. Kaseb, Kent Gauen, \textbf{Ryan Dailey}, Sarah Aghajanzadeh, Yung-Hsiang Lu, Shu-Ching Chen, Mei-Ling Shyu, "\if\online1 \href{https://drive.google.com/open?id=1MIHxzYJoPLmKy7OXyZUhjhRnKTiDwypx}{Dynamic Sampling in Convolutional Neural Networks for Imbalanced Data Classification}\else Dynamic Sampling in Convolutional Neural Networks for Imbalanced Data Classification\fi", IEEE Conference on Multimedia Information Processing and Retrieval 2018.
+        
+        \item Yung-Hsiang Lu, George K. Thiruvathukal, Ahmed S. Kaseb, Kent Gauen, Damini Rijhwani, \textbf{Ryan Dailey}, Deeptanshu Malik, Yutong Huang, Sarah Aghajanzadeh, Minghao Guo, "\if\online1 \href{https://arxiv.org/pdf/1904.06775.pdf}{See the World through Network Cameras}\else See the World through Network Cameras\fi", Computer 52, 10 (oct 2019), 30–40.
     \end{itemize}
     % \else
     % \begin{itemize}[leftmargin=*]
@@ -416,23 +507,34 @@
     % \fi
 }
 
+\cvsection{PATENTS}
+
+\cvitem{
+    \cvdurationstyle{}
+}{
+    \begin{itemize}[leftmargin=*]
+        \item \if\online1 \href{https://patents.google.com/patent/US20200327174A1/en}{US Patent 11113344, “Automated Discovery of Network Camera in Heterogeneous Web Pages”}\else US Patent 11113344, “Automated Discovery of Network Camera in Heterogeneous Web Pages”\fi, Date of Patent: Sep 7, 2021, Assignee: Purdue Research Foundation. Inventors: Yung-hsiang Lu and \textbf{Ryan Merrill Dailey}. Primary Examiner: Wing F Chan, Assistant Examiner: Joseph R Maniwang.
+    \end{itemize}
+}
+
+
 \cvsection{EXPERIENCE}
 
 \cvitem{
-    \cvdurationstyle{July 2017}
+    \cvdurationstyle{Jul. 2017}
 }{
     \cvtitle{Low Power Image Recognition Challenge (LPIRC) – Competition Organizer}
     
     Conference on Computer Vision and Pattern Recognition (CVPR), Honolulu, Hawaii
 
     \begin{itemize}[leftmargin=*]
-        \item Developed automated submission and scoring system for the competition. \if\online1(\href{https://rebootingcomputing.ieee.org/lpirc}{LPIRC website})\fi
+        \item Developed automated submission and scoring system for computer vision models in LPIRC competition \if\online1(\href{https://rebootingcomputing.ieee.org/lpirc}{LPIRC website})\fi.
         \item Evaluated the participants' object detection submissions and calculated final scores.
     \end{itemize}
 }
 
 \cvitem{
-    \cvdurationstyle{January 2017}
+    \cvdurationstyle{Jan. 2017}
 }{
     \cvtitle{"Creating the World’s Largest Network Camera Database" – Presenting Author}
 
@@ -444,31 +546,35 @@
 }
 
 \cvitem{
-    \cvdurationstyle{November 2017}
+    \cvdurationstyle{Nov. 2017}
 }{
     \cvtitle{"Low-Power Image Recognition Challenge (LPIRC)" – Poster}
     
     IEEE International Conference on Rebooting Computing 2017, Tysons, Virginia
 
     \begin{itemize}[leftmargin=*]
-        \item Presented poster summarizing the previous three years of the Low Power Image Recognition Challenge.
+        \item Presented poster summarizing results of the Low Power Image Recognition Challenge.
     \end{itemize}
 }
 
+\if\cv1
+
+
 \cvitem{
-    \cvdurationstyle{March 2019}
+    \cvdurationstyle{Mar. 2019}
 }{
     \cvtitle{"Automated Indexing of Visual Data from Network Cameras" – Poster}
     
     Purdue CERIAS Symposium, West Lafayette, Indiana
 
     \begin{itemize}[leftmargin=*]
-        \item Presented general approach for collecting live network camera data from the internet.
+        \item Presented general approach for automatically collecting real-time network camera feeds.
     \end{itemize}
 }
 
+
 \cvitem{
-    \cvdurationstyle{April 2017}
+    \cvdurationstyle{Apr. 2017}
 }{
     \cvtitle{"Analyze Visual Data from Worldwide Network Cameras" – Poster}
     
@@ -479,9 +585,9 @@
     \end{itemize}
 }
 
-\if\cv1
+
 \cvitem{
-    \cvdurationstyle{July 2019}
+    \cvdurationstyle{Jul. 2019}
 }{
     \cvtitle{Attendee}
     
@@ -491,57 +597,55 @@
         \item Attended sprints for Dask development.
     \end{itemize}
 }
-\fi
 
-\cvitem{
-    \cvdurationstyle{October 2018}
-}{
-    \cvtitle{"An overview of Git and GitHub" – Guest Lecture}
+% \cvitem{
+%     \cvdurationstyle{Oct. 2018}
+% }{
+%     \cvtitle{"An overview of Git and GitHub" – Guest Lecture}
     
-    Purdue University, West Lafayette, Indiana
+%     Purdue University, West Lafayette, Indiana
 
-    \begin{itemize}[leftmargin=*]
-        \item Presented an introduction to Git and GitHub version control systems for Vertically Integrated Projects (VIP) at Purdue.
-    \end{itemize}
-}
+%     \begin{itemize}[leftmargin=*]
+%         \item Presented an introduction to Git and GitHub version control systems for Vertically Integrated Projects (VIP) at Purdue.
+%     \end{itemize}
+% }
 
 \cvitem{
-    \cvdurationstyle{June 2017}
+    \cvdurationstyle{Jun. 2017}
 }{
     \cvtitle{"Global Network Cameras and Public Safety" – Guest Lecture}
     
     Purdue University, West Lafayette, Indiana
 
     \begin{itemize}[leftmargin=*]
-        \item Presented a lecture for the 2017 Morgan St. Summer Visual Analytics Workshop on the impact of network cameras on public safety and the integration of the CAM2 network camera database with the VALET system.
+        \item Presented "Real-Time Network Cameras and Public Safety" lecture to 2017 Morgan St. Summer Visual Analytics Workshop.
     \end{itemize}
 }
 
-\if\cv1
-    \cvsection{FRATERNITY LEADERSHIP}
-    
-    \cvitem{
-        \cvdurationstyle{Spring and Fall 2016}
-    }{
-        \cvtitle{Kappa Delta Rho, Theta Chapter, Purdue University}
-        
-        Risk Management Officer
-    
-        \begin{itemize}[leftmargin=*]
-            \item Elected member of the executive board by chapter.
-            \item Created and maintained a safe, sustainable environment for the members of the chapter.
-            \item Communicated with other members of the executive board in planning events and enforcing the house code of conduct. 
-        \end{itemize}
-        
-        Centurion
-    
-        \begin{itemize}[leftmargin=*]
-            \item Elected by the chapter to the 3-member judiciary board.
-            \item Reviewed decisions made by the executive board to ensured fair and unbiased punishment, among other responsibilities.
-        \end{itemize}
-    }
-\fi
+\cvsection{FRATERNITY LEADERSHIP}
 
+\cvitem{
+    \cvdurationstyle{Spring and Fall 2016}
+}{
+    \cvtitle{Kappa Delta Rho, Theta Chapter, Purdue University}
+    
+    Risk Management Officer
+
+    \begin{itemize}[leftmargin=*]
+        \item Elected member of the executive board by chapter.
+        \item Created and maintained a safe, sustainable environment for the members of the chapter.
+        \item Communicated with other members of the executive board in planning events and enforcing the house code of conduct. 
+    \end{itemize}
+    
+    Centurion
+
+    \begin{itemize}[leftmargin=*]
+        \item Elected by the chapter to the 3-member judiciary board.
+        \item Reviewed decisions made by the executive board to ensured fair and unbiased punishment, among other responsibilities.
+    \end{itemize}
+}
+\fi
+% END ONE PAGE =================================
 % skills
 % ------
 \cvsection{SKILLS}
@@ -550,12 +654,12 @@
 \cvitem{
     \cvheadingstyle{Programming Languages:}
 }{
-    Python, JavaScript, Node.js, Bash, C, C++, SQL, NoSQL, System Verilog, Bash, Octave, MATLAB, HTML, CSS
+    Python, JavaScript, Bash, C, C++, SQL, System Verilog, Octave, MATLAB, HTML, CSS
 }
 \cvitem{
     \cvheadingstyle{Libraries and Frameworks:}
 }{
-    MongoDB, Git, GitHub, Numpy, Pandas, Dask, Scikit Learn, Spark, Hadoop, Scipy, Django, Flask, Docker, OpenCV, Excel, System Verilog, AWS, Pytorch, TensorFlow, Continuous Integration, REST APIs, Linux, Jupyter, Anaconda, Sphinx, STM32, EagleCAD, OrCAD, Tableau
+    AWS, Pytorch, TensorFlow, PIL, OpenCV, FFMPEG, Numpy, Pandas, Dask, Scikit Learn, Airflow, Prefect, Plotly, Spark, Hadoop, Scipy, Docker, MongoDB, Git, GitHub, Django, Flask, Apache, Jenkins, Linux, Jupyter, Anaconda, Sphinx, STM32, EagleCAD, Tableau, Node.js, React.js, Kubernetes, Helm, Skaffold
 }
 
 \end{document}
